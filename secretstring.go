@@ -4,6 +4,11 @@ package secretstring
 
 import "reflect"
 
+const (
+	defaultMask           string = "********"
+	defaultMarshallMasked bool   = false
+)
+
 // secretString is the (private) underlying type of SecretString that holds the actual secret.
 // It is used to prevent fmt.Sprint or alike from printing the secret,
 // since they don't call the String() method, but instead read the underlying value from memory.
@@ -29,8 +34,8 @@ type Options struct {
 func New(secret string) *SecretString {
 	return &SecretString{
 		secret:         secretString(secret),
-		mask:           "********",
-		marshallMasked: false,
+		mask:           defaultMask,
+		marshallMasked: defaultMarshallMasked,
 	}
 }
 
@@ -119,6 +124,9 @@ func (s *SecretString) MarshalJSON() ([]byte, error) {
 // 		t.PinNumber.GetSecret() // returns "0000"
 //
 func (s *SecretString) UnmarshalJSON(b []byte) error {
-	s.secret = secretString(b)
+	s.secret = secretString(string(b))
+	s.mask = defaultMask
+	s.marshallMasked = defaultMarshallMasked
+
 	return nil
 }
