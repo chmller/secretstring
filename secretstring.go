@@ -2,7 +2,10 @@
 // The secret is masked when printed or marshalled, but can be retrieved using the GetSecret() method.
 package secretstring
 
-import "reflect"
+import (
+	"reflect"
+	"strings"
+)
 
 const (
 	defaultMask           string = "********"
@@ -124,7 +127,10 @@ func (s *SecretString) MarshalJSON() ([]byte, error) {
 // 		t.PinNumber.GetSecret() // returns "0000"
 //
 func (s *SecretString) UnmarshalJSON(b []byte) error {
-	s.secret = secretString(string(b))
+	encodedValue := string(b)
+	encodedValue = strings.Trim(encodedValue, "\"")
+
+	s.secret = secretString(encodedValue)
 	s.mask = defaultMask
 	s.marshallMasked = defaultMarshallMasked
 
