@@ -12,7 +12,7 @@ func TestSecretString_New(t *testing.T) {
 	if s.secret != "hello world" {
 		t.Error("secret is not set correctly")
 	}
-	if s.mask != "********" {
+	if s.mask != defaultMask {
 		t.Error("mask is not set correctly")
 	}
 	if s.marshallMasked != false {
@@ -39,7 +39,7 @@ func TestSecretString_NewWithOptions(t *testing.T) {
 }
 
 func TestSecretString_String(t *testing.T) {
-	expected := "********"
+	expected := defaultMask
 
 	s := New("this_is_a_secret")
 
@@ -57,7 +57,7 @@ func TestSecretString_String(t *testing.T) {
 }
 
 func TestSecretString_InnerStringMasked(t *testing.T) {
-	expected := "********"
+	expected := defaultMask
 
 	s := New("this_is_a_secret")
 
@@ -137,7 +137,7 @@ func TestSecretString_UnmarshalJSON(t *testing.T) {
 	var testInstance testStruct
 	_ = json.Unmarshal(bytes, &testInstance)
 
-	if testInstance.Password.String() == "supersecret" {
+	if testInstance.Password.String() != defaultMask {
 		t.Errorf("field is not masked!")
 	}
 }
